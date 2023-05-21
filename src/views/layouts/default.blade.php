@@ -22,6 +22,19 @@
 		@include('administrator::partials.footer')
 	</div>
 
+<!-- npm i jquery.hotkeys,然后使用以下快捷键，可以快速定位到标题input框，录入新建文章、话题等 -->
+<!--<script src="{{asset('js/jquery-3.6.1.min.js')}}"></script>
+<script src="{{asset('js/jquery.hotkeys.js')}}"></script>
+<script>
+
+  jQuery(document).bind('keypress', 'a', function (evt) {
+
+    $('#edit_field_title').focus();
+    return false;
+
+  });
+</script>-->
+
 	<script src="{{asset('packages/summerblue/administrator/js/base.js')}}"></script>
 	@foreach ($myjs as $url)
 		<script src="{{$url}}"></script>
