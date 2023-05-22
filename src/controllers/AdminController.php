@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\File;
 use Illuminate\Session\SessionManager as Session;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\File\File as SFile;
 
 /**
@@ -186,6 +187,9 @@ class AdminController extends Controller
             return response()->json($errorResponse);
         }
 
+        //delete the file if it exist
+        Storage::disk('articles')->delete($model->attach_uri);
+
         //delete the model
         // 如果删除成功，或者数据库里面再也找不到了，就算成功
         if ($model->delete() || !$baseModel::find($id)) {
@@ -214,7 +218,6 @@ class AdminController extends Controller
             'success' => false,
             'error'   => 'There was an error perform batch deletion. Please reload the page and try again.',
         );
-
         //if don't have permission, send back request
         $permissions = $actionFactory->getActionPermissions();
         if (!$permissions['delete']) {
@@ -223,6 +226,13 @@ class AdminController extends Controller
 
         //request ids: 1,3,5
         $ids = explode(',', $this->request->ids);
+
+        //delete files if it exist
+        foreach ($baseModel::whereIn('id', $ids)->cursor() as $id) {
+            Storage::disk('articles')->delete($id->attach_uri);
+        }
+
+
         //delete the model
         if ($baseModel::whereIn('id', $ids)->delete()) {
             return response()->json(array(
